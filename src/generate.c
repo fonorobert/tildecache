@@ -4,12 +4,11 @@
 #include <ctype.h>
 #include <time.h>
 
-#define MAX_ROWS 100
-#define MAX_COLUMNS 100
+#define MAX_ROWS 8
+#define MAX_COLS 8
 #define true 1
 #define false 0
 
-int cacheset = false; // var to track if we have a cache yet
 
 struct Tile {
 	struct Tile *neighbour[4];
@@ -21,7 +20,7 @@ struct Tile {
 
 struct Row {
 	int width;
-	struct Tile tiles[MAX_COLUMNS];
+	struct Tile tiles[MAX_COLS];
 };
 
 struct Map {
@@ -30,15 +29,36 @@ struct Map {
 	struct Row rows[MAX_ROWS];
 };
 
+void Map_print (struct Map *map);
+void Map_create (struct Map *map);
+
+
+int main(int argc, char *argv[]) {
+	srand(time(0));
+	struct Map *map = malloc(sizeof(struct Map));
+
+	Map_create(map);
+
+//	Map_print(map);
+	int rowprint=rand()%MAX_ROWS;
+	int colprint=rand()%MAX_COLS;
+	printf("tile %dx%d terrain: %d\n", rowprint, colprint, map->rows[rowprint].tiles[colprint].terrain);
+	printf("%d\n", rand());
+
+	free(map);
+	return 0;
+}
+
 void Map_create (struct Map *map) {
 	int r = 0;
 	int c = 0;
+	int cacheset = false; // var to track if we have a cache yet
 
 	for(r = 0; r<MAX_ROWS; r++) {
 		//new row
-		struct Row row = { .width = MAX_COLUMNS};
+		struct Row row = { .width = MAX_COLS};
 
-		for(c = 0; c<MAX_COLUMNS;c++) {
+		for(c = 0; c<MAX_COLS;c++) {
 			//new tile in row
 			int terrain = rand() % 5;
 			int blocked = rand() % 2;
@@ -52,7 +72,7 @@ void Map_create (struct Map *map) {
 					cache = true;
 					cacheset = true;
 				} 
-			} else if(c == MAX_COLUMNS-1 && r == MAX_ROWS && cacheset == false) {
+			} else if(c == MAX_COLS-1 && r == MAX_ROWS && cacheset == false) {
 				cache = true;
 				cacheset = true;
 			}
@@ -67,17 +87,9 @@ void Map_create (struct Map *map) {
 	}
 }
 
-int main(int argc, char *argv[]) {
-	srand(time(0));
-	struct Map *map = malloc(sizeof(struct Map));
+void Map_print (struct Map *map) {
 
-	Map_create(map);
 
-	int rowprint=rand()%MAX_ROWS;
-	int colprint=rand()%MAX_COLUMNS;
-	printf("tile %dx%d terrain: %d\n", rowprint, colprint, map->rows[rowprint].tiles[colprint].terrain);
-	printf("%d\n", rand());
 
-	free(map);
-	return 0;
+
 }
