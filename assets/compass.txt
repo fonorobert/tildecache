@@ -1,0 +1,7 @@
+  NW  N  NE
+    o o o
+     \|/
+W o---@---o E
+     /|\
+    o o o
+  SW  S  SE
