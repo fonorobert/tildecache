@@ -30,6 +30,7 @@ typedef struct Map Map;
 char terrain[5] = {'t', 'r', 's', 'm', 'g'};
 
 void Map_print (struct Map *map);
+void Map_print_csv (struct Map *map);
 void Map_create (struct Map *map);
 void die (Map *map, char *error);
 int blockedcount(Map *map);
@@ -40,16 +41,9 @@ int main(int argc, char *argv[]) {
 
 	Map_create(map);
 
-	printf("number of tiles: %d map size (KiB): %d\n", MAX_COLS*MAX_ROWS, sizeof(Map)/1024);
-	float blockedchance = (float)blockedcount(map)/(float)(MAX_COLS*MAX_ROWS)*(float)100;
-	printf("blocked chance: %f\n", blockedchance);
-//	Map_print(map);
-//	int rowprint=rand()%MAX_ROWS;
-//	int colprint=rand()%MAX_COLS;
-//	printf("tile %dx%d terrain: %c\n", colprint, rowprint, map->cols[colprint].tiles[rowprint].terrain);
-//	printf("%d\n", rand());
+	Map_print_csv(map);
 
-	die(map, "finished successfully");
+	die(map, "");
 	return 0;
 }
 
@@ -81,6 +75,17 @@ void Map_print (struct Map *map) {
 		for(int j = 0; j < MAX_ROWS; j++) {
 			Tile tile = map->cols[i].tiles[j];
 			printf("col %d row %d terrain %c blocked %d\n", i, j, tile.terrain, tile.blocked);
+		}
+	}
+
+}
+
+void Map_print_csv (struct Map *map) {
+	printf("col,row,terrain,blocked\n");
+	for(int i = 0; i < MAX_COLS; i++) {
+		for(int j = 0; j < MAX_ROWS; j++) {
+			Tile tile = map->cols[i].tiles[j];
+			printf("%d,%d,%c,%d\n", i, j, tile.terrain, tile.blocked);
 		}
 	}
 
