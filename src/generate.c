@@ -11,85 +11,73 @@
 
 
 struct Tile {
-	struct Tile *neighbour[4];
-	int terrain;
+	char terrain;
 	int blocked; //handled as bool
-	int cache; //handled as bool
 };
 
-
-struct Row {
-	int width;
-	struct Tile tiles[MAX_COLS];
+struct Col {
+	struct Tile tiles[MAX_ROWS];
 };
 
 struct Map {
-	int width;
-	int height;
-	struct Row rows[MAX_ROWS];
+	struct Col cols[MAX_COLS];
 };
+
+typedef struct Tile Tile;
+typedef struct Col Col;
+typedef struct Map Map;
+
+// trees, rocks, sand, mud, grass
+char terrain[5] = {'t', 'r', 's', 'm', 'g'};
 
 void Map_print (struct Map *map);
 void Map_create (struct Map *map);
-
+void die (Map *map, char *error);
 
 int main(int argc, char *argv[]) {
 	srand(time(0));
-	struct Map *map = malloc(sizeof(struct Map));
+	Map *map = malloc(sizeof(struct Map));
 
 	Map_create(map);
 
-//	Map_print(map);
-	int rowprint=rand()%MAX_ROWS;
-	int colprint=rand()%MAX_COLS;
-	printf("tile %dx%d terrain: %d\n", rowprint, colprint, map->rows[rowprint].tiles[colprint].terrain);
-	printf("%d\n", rand());
+	Map_print(map);
+//	int rowprint=rand()%MAX_ROWS;
+//	int colprint=rand()%MAX_COLS;
+//	printf("tile %dx%d terrain: %c\n", colprint, rowprint, map->cols[colprint].tiles[rowprint].terrain);
+//	printf("%d\n", rand());
 
-	free(map);
+	die(map, "finished successfully");
 	return 0;
 }
 
 void Map_create (struct Map *map) {
-	int r = 0;
 	int c = 0;
-	int cacheset = false; // var to track if we have a cache yet
+	int r = 0;
+	int terrlength = sizeof(terrain)/sizeof(char);
 
-	for(r = 0; r<MAX_ROWS; r++) {
-		//new row
-		struct Row row = { .width = MAX_COLS};
-
-		for(c = 0; c<MAX_COLS;c++) {
-			//new tile in row
-			int terrain = rand() % 5;
-			int blocked = rand() % 2;
-			int cache = rand() % 2;
-
-			if(cache) {
-
-				if(cacheset == true) {
-					cache = true;
-				} else {
-					cache = true;
-					cacheset = true;
-				} 
-			} else if(c == MAX_COLS-1 && r == MAX_ROWS && cacheset == false) {
-				cache = true;
-				cacheset = true;
-			}
-
-			struct Tile tile = { .terrain = terrain, .blocked = blocked, .cache = cache, };
-
-			row.tiles[c] = tile;
+	for(int i = 0; i < MAX_COLS; i++) {
+		for(int j = 0; j < MAX_ROWS; j++) {
+			map->cols[i].tiles[j].terrain = terrain[rand() % terrlength];
+			map->cols[i].tiles[j].blocked = rand() % 2;
 		}
-
-		map->rows[r] = row;
-
 	}
+
+
 }
 
 void Map_print (struct Map *map) {
 
+	for(int i = 0; i < MAX_COLS; i++) {
+		for(int j = 0; j < MAX_ROWS; j++) {
+			Tile tile = map->cols[i].tiles[j];
+			printf("col %d row %d terrain %c blocked %d\n", i, j, tile.terrain, tile.blocked);
+		}
+	}
 
+}
 
-
+void die (Map *map, char *error) {
+	free(map);
+	printf(error);
+	exit(0);
 }
