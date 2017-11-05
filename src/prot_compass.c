@@ -10,7 +10,10 @@ int main(int argc, char *argv[]) {
 	if(argc != 5) { 
 		die("Expecting exactly 4 arguments!"); 
 	}
+
 	// args: playerX, playerY, cacheX, cacheY
+	// grid: x left to right, y top to bottom
+
 	int player[2] = {atoi(argv[1]), atoi(argv[2])};
 	int cache[2] = {atoi(argv[3]), atoi(argv[4])};
 
